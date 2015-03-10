@@ -1,0 +1,5 @@
+<ul>
+  <% @cat_rental_requests.each do |crr| %>
+  <li><%= "Start: #{crr.start_date}, End: #{crr.end_date}, Status: #{crr.status}" %></li>
+  <% end %>
+</ul>

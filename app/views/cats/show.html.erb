@@ -4,6 +4,13 @@
 <li>
   Color: <%= @cat.color %>, Age: <%= @cat.age %>, Sex: <%= @cat.sex %>
 </li>
-<li>
+<p>
+  About this cat:
+  <br>
   <%= @cat.description %>
-</li>
+</p>
+<br>
+  Rental Requests:
+  <% @cat_rental_requests.each do |crr| %>
+  <li><%= "Start: #{crr.start_date}, End: #{crr.end_date}, Status: #{crr.status}" %></li>
+  <% end %>
