@@ -1,0 +1,24 @@
+<form action=<%= cats_url %> method="post">
+  <label>Name:
+  <input type="text" name="cat[name]" value="<%= @cat.name %>">
+  </label>
+  <br>
+
+  <input type="radio" name="cat[sex]" id="cat_sex_female" value="F">
+  <label for="cat_sex_female">Female</label>
+  <br>
+  <input type="radio" name="cat[sex]" id="cat_sex_male" value="M">
+  <label for="cat_sex_male">Male</label>
+  <br>
+  <label for="cat_color">Color</label>
+  <!-- dropdown -->
+  <select name="cat[color]" id="cat_color">
+    <!-- `brown`, if selected, is the value that will be submitted to
+         the server; user is displayed "Brown" as the choice -->
+    <option value="calico">Calico</option>
+    <option value="grumpy">Grumpy</option>
+  </select>
+  <br>
+
+  <input type="submit" value="Create cat">
+</form>
