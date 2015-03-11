@@ -1,5 +1,5 @@
 class CatRentalRequest < ActiveRecord::Base
-  validates :cat_id, :start_date, :end_date, :status, presence: true
+  validates :cat_id, :start_date, :end_date, :status, :user_id, presence: true
   validates :status, inclusion: { in: %w(PENDING APPROVED DENIED) }
   validate :overlapping_approved_requests
 
@@ -11,6 +11,11 @@ class CatRentalRequest < ActiveRecord::Base
     foreign_key: :cat_id,
     primary_key: :id,
     class_name: 'Cat'
+
+  belongs_to :user,
+    foreign_key: :user_id,
+    primary_key: :id,
+    class_name: 'User'
 
   def approve!
     self.status = "APPROVED"
@@ -27,17 +32,12 @@ class CatRentalRequest < ActiveRecord::Base
   private
 
   def overlapping_requests
-    if !self.id.nil?
-      CatRentalRequest.where("((start_date >= ? AND start_date <= ?) OR (end_date >= ? AND end_date <= ?) OR
-                            (start_date <= ? AND end_date >= ?)) AND (id != ?)",
-                             self.start_date, self.end_date, self.start_date, self.end_date,
-                             self.start_date, self.end_date, self.id)
-    else
-      CatRentalRequest.where("((start_date >= ? AND start_date <= ?) OR (end_date >= ? AND end_date <= ?) OR
-                            (start_date <= ? AND end_date >= ?)) AND (id IS NOT NULL)",
-                             self.start_date, self.end_date, self.start_date, self.end_date,
-                             self.start_date, self.end_date)
-    end
+    CatRentalRequest
+      .where("(:id IS NULL) OR (id != :id)", id: self.id)
+      .where(cat_id: cat_id)
+      .where(<<-SQL, start_date: start_date, end_date: end_date)
+       NOT( (start_date > :end_date) OR (end_date < :start_date) )
+SQL
   end
 
   def overlapping_approved_requests

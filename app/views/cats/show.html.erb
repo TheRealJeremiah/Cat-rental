@@ -12,9 +12,11 @@
 <br>
   Rental Requests:
   <% @cat_rental_requests.each do |crr| %>
-  <li><%= "Start: #{crr.start_date}, End: #{crr.end_date}, Status: #{crr.status}" %></li>
-    <% if crr.status == "PENDING" %>
+  <li><%= "Requestor: #{crr.user.username}, Start: #{crr.start_date}, End: #{crr.end_date}, Status: #{crr.status}" %></li>
+    <% if crr.status == "PENDING" && logged_in? && current_user.id == @cat.user_id%>
       <%= button_to "Approve", approve_cat_rental_request_url(crr) %>
       <%= button_to "Deny", deny_cat_rental_request_url(crr) %>
     <% end %>
   <% end %>
+<br><br>
+<%= link_to "Request cat rental", new_cat_cat_rental_request_url(@cat) if logged_in?%>
