@@ -14,23 +14,30 @@ class CatRentalRequest < ActiveRecord::Base
 
   def approve!
     self.status = "APPROVED"
-    self.save!
+    self.save
 
     overlapping_requests.update_all(status: "DENIED")
   end
 
   def deny!
     self.status = "DENIED"
-    self.save!
+    self.save
   end
 
-  # private
+  private
 
   def overlapping_requests
-    CatRentalRequest.where("((start_date >= ? AND start_date <= ?) OR (end_date >= ? AND end_date <= ?) OR
-                            (start_date <= ? AND end_date >= ?)) AND (id IS NOT NULL OR id != ?)",
+    if !self.id.nil?
+      CatRentalRequest.where("((start_date >= ? AND start_date <= ?) OR (end_date >= ? AND end_date <= ?) OR
+                            (start_date <= ? AND end_date >= ?)) AND (id != ?)",
                              self.start_date, self.end_date, self.start_date, self.end_date,
                              self.start_date, self.end_date, self.id)
+    else
+      CatRentalRequest.where("((start_date >= ? AND start_date <= ?) OR (end_date >= ? AND end_date <= ?) OR
+                            (start_date <= ? AND end_date >= ?)) AND (id IS NOT NULL)",
+                             self.start_date, self.end_date, self.start_date, self.end_date,
+                             self.start_date, self.end_date)
+    end
   end
 
   def overlapping_approved_requests
