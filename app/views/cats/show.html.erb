@@ -13,4 +13,8 @@
   Rental Requests:
   <% @cat_rental_requests.each do |crr| %>
   <li><%= "Start: #{crr.start_date}, End: #{crr.end_date}, Status: #{crr.status}" %></li>
+    <% if crr.status == "PENDING" %>
+      <%= button_to "Approve", approve_cat_rental_request_url(crr) %>
+      <%= button_to "Deny", deny_cat_rental_request_url(crr) %>
+    <% end %>
   <% end %>
