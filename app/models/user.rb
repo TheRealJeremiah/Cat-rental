@@ -23,9 +23,14 @@ class User < ActiveRecord::Base
     user.is_password?(password) ? user : nil
   end
 
-  def reset_session_token!
-    self.session_token = SecureRandom.urlsafe_base64
-    save
+  def add_session_token!
+    session_token = SecureRandom.urlsafe_base64
+    Session.create(user_id: id, token: session_token)
+    session_token
+  end
+
+  def delete_session_token!(token)
+    Session.where(user_id: id, token: token).destroy_all
   end
 
   def password=(password)
