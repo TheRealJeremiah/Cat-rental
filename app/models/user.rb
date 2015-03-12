@@ -14,18 +14,20 @@ class User < ActiveRecord::Base
     primary_key: :id,
     class_name: 'CatRentalRequest'
 
-  after_initialize do
-    reset_session_token!
-  end
+  has_many :sessions,
+    foreign_key: :user_id,
+    primary_key: :id,
+    class_name: 'Session'
 
   def self.find_by_credentials(username, password)
     user = User.find_by(username: username)
     user.is_password?(password) ? user : nil
   end
 
-  def add_session_token!
+  def add_session_token!(options = {})
     session_token = SecureRandom.urlsafe_base64
-    Session.create(user_id: id, token: session_token)
+    Session.create(user_id: id, token: session_token,
+                   environment: options[:environment], location: options[:location])
     session_token
   end
 

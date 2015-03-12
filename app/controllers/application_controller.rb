@@ -5,15 +5,15 @@ class ApplicationController < ActionController::Base
   helper_method :current_user, :logged_in?
 
   def current_user
-    @current_user ||= User.find_by_id(session[:user])
+    @current_user ||= Session.find_by_token(session[:token]).try(:user)
   end
 
   def logged_in?
     current_user != nil
   end
 
-  def login_user!(user)
-    session[:token] = user.add_session_token!
+  def login_user!(user, options)
+    session[:token] = user.add_session_token!(options)
     session[:user] = user.id
   end
 end

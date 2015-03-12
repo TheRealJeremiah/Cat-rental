@@ -9,7 +9,16 @@
 <body>
 <% if logged_in? %>
 <h1>Hello, <%= current_user.username %> </h1>
-<h1><%= button_to "Logout", session_url, method: :delete %></h1>
+<form action="<%= session_url %>" method="post">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" >
+  <input type="hidden" name="_method" value="delete">
+<select name="session[token]" id="cat_color">
+  <% Session.where(user_id: current_user.id).each do |session| %>
+  <option value="<%= session.token %>"><%= "#{session.environment}, #{session.location}" %></option>
+  <% end %>
+</select>
+<input type="submit" value="Log out!">
+</form>
 <% else %>
 <h1> <%= link_to "login", new_session_url %> </h1>
 <% end %>
